@@ -11,7 +11,7 @@
 
 Enterprise C operates a single-train bioprocessing facility producing rBMN-42, a recombinant biologic currently in commercial manufacturing. Our process consists of four integrated units: a 500L media preparation system (SUM500), a 250L bioreactor for upstream cell culture (UNIT-250), a chromatography skid for downstream purification (CHR01), and tangential flow filtration for final concentration (TFF300).
 
-With 188 process tags generating continuous data across batch operations, we faced a fundamental challenge: how do we transform raw process data into the contextualized batch records required for GMP compliance?
+With 189 process tags generating continuous data across batch operations, we faced a fundamental challenge: how do we transform raw process data into the contextualized batch records required for GMP compliance?
 
 ## The Regulatory Burden We Faced
 
@@ -43,7 +43,7 @@ Data integrity in pharmaceutical manufacturing follows ALCOA+ principles: Attrib
 | **Attributable** | Operator acknowledgments (ACK_INOCULATION, ACK_HARVEST) tied to batch context |
 | **Contemporaneous** | Real-time publication at the moment of measurement |
 | **Original** | Sparkplug B birth/death certificates establish data provenance |
-| **Complete** | 188 tags covering all critical process parameters |
+| **Complete** | 189 tags covering all critical process parameters |
 | **Consistent** | ISA-5.1 tag naming (TIC101_PV, AIC101_DO_SP) across all units |
 
 ## Operational and Financial Impact

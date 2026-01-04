@@ -89,7 +89,7 @@ Enterprise C (Bioprocessing/Pharmaceutical Manufacturing)
                     Tags: 26 | Current Phase: IDLE
 ```
 
-**Total:** 1 Enterprise | 4 Process Units | 188 Tags | Single Product Train
+**Total:** 1 Enterprise | 4 Process Units | 189 Tags | Single Product Train
 
 > **Key Difference from Enterprise A/B:** Enterprise C uses a **flat hierarchy** (Enterprise -> Device -> Tags) rather than the Site/Area/Line/Equipment structure used in discrete manufacturing. This reflects the batch-centric nature of bioprocessing where process units operate as integrated systems.
 
@@ -561,7 +561,7 @@ Enterprise C/{device}/
 | **Status** | IDLE |
 | **Recipe** | PR_SUM_MEDIA |
 | **Formula** | rBMN-42 |
-| **Total Tags** | 27 |
+| **Total Tags** | 28 |
 
 **Key Process Variables:**
 
@@ -923,6 +923,7 @@ Enterprise C/sum/OPR_ID
 Enterprise C/sum/OPR_VRF
 Enterprise C/sum/PHASE_ID
 Enterprise C/sum/PRMP_MSG1
+Enterprise C/sum/PRMP_MSG2
 Enterprise C/sum/RECIPE_ID
 Enterprise C/sum/SIC501-PV_RPM
 Enterprise C/sum/SIC501-SP_RPM

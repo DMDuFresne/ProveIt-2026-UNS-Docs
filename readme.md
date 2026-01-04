@@ -95,7 +95,7 @@ Consider what we discovered just from message traffic:
 
 **From Enterprise B (Beverage Bottling):**
 - Three geographically distinct sites with consistent naming conventions
-- 121 assets across four functional areas per site
+- 120 assets across four functional areas per site
 - Vats with friendly names (Jeff, Raymond, Billy, Bob) that operators actually use
 - Work orders flowing down to equipment level
 - OEE calculations with all contributing inputs exposed

@@ -54,7 +54,7 @@ Every data point has a clear, logical path that follows your plant's physical la
 
 ### What Data is Available?
 
-The UNS provides access to four categories of data across 121 assets:
+The UNS provides access to four categories of data across 120 assets:
 
 | Data Category | What It Contains | Example Questions It Answers |
 |---------------|------------------|------------------------------|
@@ -78,7 +78,7 @@ Enterprise B
             Smallest site, 1 filling line, 1 labeler line
 ```
 
-**Total:** 3 Sites | 12 Areas | 32 Lines | 76 Work Centers | 121 Assets
+**Total:** 3 Sites | 12 Areas | 29 Lines | 76 Work Centers | 120 Assets
 
 ---
 
@@ -1151,9 +1151,9 @@ The smallest site, with single production lines in each area. Good for testing q
 | Metric | Site 1 | Site 2 | Site 3 | Enterprise Total |
 |--------|--------|--------|--------|------------------|
 | Areas | 4 | 4 | 4 | **12** |
-| Lines | 19 | 8 | 5 | **32** |
-| WorkCenters | 44 | 22 | 10 | **76** |
-| **Total Assets** | 68 | 35 | 20 | **123** |
+| Lines | 15 | 9 | 5 | **29** |
+| WorkCenters | 43 | 23 | 10 | **76** |
+| **Total Assets** | 63 | 37 | 20 | **120** |
 
 ### Equipment Counts by Type
 
