@@ -1233,21 +1233,6 @@ Enterprise C is batch-centric, not OEE-focused. Performance is measured by:
 
 ---
 
-## Key Differences from Enterprise A and Enterprise B
-
-| Aspect | Enterprise A (Glass) | Enterprise B (Beverage) | Enterprise C (Biopharma) |
-|--------|---------------------|------------------------|-------------------------|
-| **Hierarchy** | Enterprise/Site/Line/Area/Equipment | Enterprise/Site/Area/Line/WorkCenter | Enterprise/Device/Tags (Flat) |
-| **Topic Format** | Custom UNS | Custom UNS | Enterprise C/{device}/{tag} |
-| **Focus** | OEE and continuous production | OEE and discrete production | Batch control and GMP |
-| **Standards** | ISA-95 (functional hierarchy) | ISA-95 (role-based) | ISA-88 (batch control) |
-| **Tag Naming** | Descriptive (Temperature, Level) | Descriptive (flowrate, temperature) | Equipment codes (AIC-250-001_PV_percent) |
-| **Key Metrics** | OEE, temperatures, counts | OEE, counts, rates | DO, pH, Temp, Pressure, Phase |
-| **Work Orders** | At Line/Equipment level | At Line/WorkCenter level | At Device level (BATCH_ID) |
-| **Operator Role** | Monitoring | Monitoring | Active prompts/acknowledgments |
-
----
-
 *Document generated for Enterprise C Unified Namespace configuration.*
 
 *For questions or updates, contact your UNS administrator.*
