@@ -200,9 +200,31 @@ Enterprise B calculates OEE at multiple levels, with metrics nested under each e
 Both approaches are valid. The documentation captures each pattern accurately.
 
 ### Naming Conventions
-Enterprise A uses mixed case with spaces: `Enterprise A/Dallas/Line 1/HotEnd/Furnace`
 
-Enterprise B uses lowercase without spaces: `Enterprise B/Site1/fillerproduction/fillingline01/filler`
+**Path Naming:**
+- Enterprise A uses mixed case with spaces: `Enterprise A/Dallas/Line 1/HotEnd/Furnace`
+- Enterprise B uses lowercase without spaces: `Enterprise B/Site1/fillerproduction/fillingline01/filler`
+- Enterprise C uses Sparkplug B format: `spBv1.0/EnterpriseC/DDATA/sub/`
+
+**Tag Naming - A Best Practice:**
+
+Enterprise C demonstrates an especially sophisticated approach using **ISA-5.1 instrument codes** (ANSI/ISA-5.1 standard). This pattern embeds meaning directly into tag names:
+
+| Code | Meaning | Example |
+|------|---------|---------|
+| **AIC** | Analytical Indicator Controller | `AIC-250-001_PV_percent` (Dissolved Oxygen) |
+| **TIC** | Temperature Indicator Controller | `TIC-250-001_PV_Celsius` |
+| **FIC** | Flow Indicator Controller | `FIC-250-001_PV_SLPM` |
+| **PIC** | Pressure Indicator Controller | `PIC-250-001_PV_psi` |
+| **SIC** | Speed Indicator Controller | `SIC-250-008_PV_RPM` |
+
+**Why this matters:** Tag names like `AIC-250-001_DO_PV` immediately tell you:
+- **What it measures** (Analytical - DO/pH/Conductivity)
+- **Where it is** (Equipment 250, Loop 001)
+- **What type of value** (PV = Process Variable, SP = Setpoint)
+- **Units** (embedded in suffix: `_percent`, `_Celsius`, `_psi`)
+
+This is **self-documenting at the tag level**—any engineer familiar with ISA-5.1 can understand the tag's purpose without consulting documentation. Enterprise C's approach shows how industry standards can be leveraged to create truly semantic namespaces.
 
 These conventions emerged directly from the message traffic. We documented what exists, not what should exist.
 
