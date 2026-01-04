@@ -11,7 +11,7 @@
 
 Enterprise C operates a single-train bioprocessing facility producing rBMN-42, a recombinant biologic currently in commercial manufacturing. Our process consists of four integrated units: a 500L media preparation system (SUM500), a 250L bioreactor for upstream cell culture (UNIT-250), a chromatography skid for downstream purification (CHR01), and tangential flow filtration for final concentration (TFF300).
 
-With 187 process tags generating continuous data across batch operations, we faced a fundamental challenge: how do we transform raw process data into the contextualized batch records required for GMP compliance?
+With 188 process tags generating continuous data across batch operations, we faced a fundamental challenge: how do we transform raw process data into the contextualized batch records required for GMP compliance?
 
 ## The Regulatory Burden We Faced
 
@@ -24,10 +24,10 @@ For a facility where a single batch failure represents a potential loss exceedin
 The Sparkplug B implementation now publishes every tag with full batch context embedded in the namespace structure. When our UNIT-250 bioreactor reports dissolved oxygen via AIC101_DO_PV, that value arrives with the batch identifier (rBMN42-2026-0042), the current phase, and the equipment state:
 
 ```
-spBv1.0/EnterpriseC/DDATA/sub/AIC101_DO_PV     -- The measurement
-spBv1.0/EnterpriseC/DDATA/sub/BATCH_ID         -- Which batch
-spBv1.0/EnterpriseC/DDATA/sub/PHASE            -- Which phase
-spBv1.0/EnterpriseC/DDATA/sub/STATE            -- Equipment state
+spBv1.0/Enterprise C/NDATA/sub/AIC101_DO_PV     -- The measurement
+spBv1.0/Enterprise C/NDATA/sub/BATCH_ID         -- Which batch
+spBv1.0/Enterprise C/NDATA/sub/PHASE            -- Which phase
+spBv1.0/Enterprise C/NDATA/sub/STATE            -- Equipment state
 ```
 
 This is not merely operational convenience. This is 21 CFR Part 11 data integrity achieved at the source.
@@ -43,7 +43,7 @@ Data integrity in pharmaceutical manufacturing follows ALCOA+ principles: Attrib
 | **Attributable** | Operator acknowledgments (ACK_INOCULATION, ACK_HARVEST) tied to batch context |
 | **Contemporaneous** | Real-time publication at the moment of measurement |
 | **Original** | Sparkplug B birth/death certificates establish data provenance |
-| **Complete** | 187 tags covering all critical process parameters |
+| **Complete** | 188 tags covering all critical process parameters |
 | **Consistent** | ISA-5.1 tag naming (TIC101_PV, AIC101_DO_SP) across all units |
 
 ## Operational and Financial Impact

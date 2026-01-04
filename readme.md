@@ -95,7 +95,7 @@ Consider what we discovered just from message traffic:
 
 **From Enterprise B (Beverage Bottling):**
 - Three geographically distinct sites with consistent naming conventions
-- 123 assets across four functional areas per site
+- 121 assets across four functional areas per site
 - Vats with friendly names (Jeff, Raymond, Billy, Bob) that operators actually use
 - Work orders flowing down to equipment level
 - OEE calculations with all contributing inputs exposed
@@ -204,7 +204,7 @@ Both approaches are valid. The documentation captures each pattern accurately.
 **Path Naming:**
 - Enterprise A uses mixed case with spaces: `Enterprise A/Dallas/Line 1/HotEnd/Furnace`
 - Enterprise B uses lowercase without spaces: `Enterprise B/Site1/fillerproduction/fillingline01/filler`
-- Enterprise C uses Sparkplug B format: `spBv1.0/EnterpriseC/DDATA/sub/`
+- Enterprise C uses Sparkplug B format: `spBv1.0/Enterprise C/NDATA/`
 
 **Tag Naming - A Best Practice:**
 

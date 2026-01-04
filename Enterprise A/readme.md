@@ -85,7 +85,7 @@ Enterprise A
                             Lehr, Inspector, Palletizer
 ```
 
-**Total:** 1 Site | 3 Areas | 13 Equipment Units | 100+ Data Points
+**Total:** 1 Site | 3 Areas | 12 Equipment Units | 100+ Data Points
 
 ---
 
@@ -775,7 +775,7 @@ Every equipment unit has data organized into categories:
 | **Current Product** | PROD-JAR-500ML-CLEAR |
 | **UNS Path** | `Enterprise A/Dallas` |
 
-**Scale:** 1 Line | 3 Areas | 13 Equipment Units | 100+ Data Points
+**Scale:** 1 Line | 3 Areas | 12 Equipment Units | 100+ Data Points
 
 ### Line 1 Overview
 

@@ -54,7 +54,7 @@ Every data point has a clear, logical path that follows your plant's physical la
 
 ### What Data is Available?
 
-The UNS provides access to four categories of data across 123 assets:
+The UNS provides access to four categories of data across 121 assets:
 
 | Data Category | What It Contains | Example Questions It Answers |
 |---------------|------------------|------------------------------|
@@ -78,7 +78,7 @@ Enterprise B
             Smallest site, 1 filling line, 1 labeler line
 ```
 
-**Total:** 3 Sites | 12 Areas | 32 Lines | 76 Work Centers | 123 Assets
+**Total:** 3 Sites | 12 Areas | 32 Lines | 76 Work Centers | 121 Assets
 
 ---
 
@@ -932,7 +932,7 @@ Enterprise B/Site1/palletizing/palletizermanual01/workstation/metric/availabilit
 | **Display Name** | The Cap Shack |
 | **UNS Path** | `Enterprise B/Site1` |
 
-**Scale:** 4 Areas | 19 Lines | 44 WorkCenters | 68 Total Assets
+**Scale:** 4 Areas | 15 Lines | 43 WorkCenters | 63 Total Assets
 
 This is the largest site in Enterprise B, featuring three filling lines (including a high-capacity line), four labeler lines, and both automated and manual palletizing.
 
@@ -1043,7 +1043,7 @@ This is the largest site in Enterprise B, featuring three filling lines (includi
 | **Display Name** | Filler Central |
 | **UNS Path** | `Enterprise B/Site2` |
 
-**Scale:** 4 Areas | 8 Lines | 22 WorkCenters | 35 Total Assets
+**Scale:** 4 Areas | 9 Lines | 23 WorkCenters | 35 Total Assets
 
 A mid-sized facility with two filling lines and comprehensive liquid processing capabilities.
 
