@@ -259,6 +259,9 @@ If a UNS can produce its own documentation, several things follow:
 - [Enterprise B: Beverage Bottling & Packaging](./Enterprise%20B/readme.md) (1,569 lines)
 - [Enterprise C: Bioprocessing/Pharmaceutical](./Enterprise%20C/readme.md) (1,378 lines)
 
+### How We Did It
+- **[How We Did It: Building a Self-Documenting Unified Namespace](./Explanation/readme.md)** - Technical deep dive into the methodology, architecture, and implementation behind this documentation generation
+
 ---
 
 ## The Bottom Line
@@ -289,6 +292,7 @@ This is the promise of the Unified Namespace: not just that data flows through a
 | [Enterprise A Documentation](./Enterprise%20A/readme.md) | Glass Container Manufacturing (Dallas) - 1,226 lines |
 | [Enterprise B Documentation](./Enterprise%20B/readme.md) | Beverage Bottling & Packaging (3 Sites) - 1,569 lines |
 | [Enterprise C Documentation](./Enterprise%20C/readme.md) | Bioprocessing/Pharmaceutical (rBMN-42 Production) - 1,378 lines |
+| [How We Did It: Technical Deep Dive](./Explanation/readme.md) | Methodology, architecture, and implementation details behind the documentation generation |
 
 ### Executive Summaries
 
