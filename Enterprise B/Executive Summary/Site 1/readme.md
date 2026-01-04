@@ -1,0 +1,44 @@
+# Executive Summary: The Cap Shack
+
+> **Author:** Marcus Chen, Plant Manager
+> **Site:** Site 1 - The Cap Shack
+> **Enterprise B - Beverage Bottling & Packaging**
+> **January 2026**
+
+---
+
+## Lessons from the Pioneer
+
+When we volunteered The Cap Shack to be the pilot site for the Unified Namespace, I knew we were signing up to make every mistake first. With 68 assets across our three filling lines, four labeler lines, and both automated and manual palletizing operations, we had complexity in spades. What I did not fully appreciate was how blind we had been operating.
+
+## Before UNS
+
+Finding Line A's OEE meant calling my process engineer, who would dig through the SCADA historian while cross-referencing an Excel file the previous supervisor had built in 2019. Our vats—Jeff, Raymond, Billy, and Bob as the team calls them—had temperature data scattered across three different systems. When quality traced a complaint back to lot LT-2024-0891, it took us two days to reconstruct what happened in the mix room.
+
+Two days.
+
+## The Implementation
+
+The rollout was not painless. We discovered that our equipment naming conventions were inconsistent. Half the team called it "the East Robot" while maintenance had it documented as "Palletizer01." The standardization process alone took eight weeks of floor-level engagement. We burned cycles, we frustrated people, and we learned that you cannot rush the taxonomy discussion.
+
+## Where We Are Now
+
+Today, I can pull real-time OEE for FillingLine03—our High Capacity Line—in seconds:
+
+```
+Enterprise B/Site1/fillerproduction/fillingline03/filler/metric/oee
+```
+
+When Raymond's temperature drifted last month, the dashboard flagged it before we had a batch out of spec. We reduced changeover-related quality holds by 34% simply because operators could now see work order details at the line level and catch SKU mismatches before the first bottle ran.
+
+## The Pioneer's Role
+
+The Cap Shack is now the benchmark. Sites 2 and 3 avoided our missteps because we documented every lesson learned.
+
+That is what pioneers do—we take the arrows so the settlers can farm in peace.
+
+---
+
+**Marcus Chen**
+*Plant Manager*
+*Site 1 - The Cap Shack*

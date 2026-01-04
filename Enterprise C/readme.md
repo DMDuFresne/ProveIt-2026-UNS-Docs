@@ -1,0 +1,1253 @@
+# Enterprise C - Unified Namespace Documentation
+
+> **Document Version:** 1.1
+> **Last Updated:** January 3, 2026
+> **Scope:** Bioprocessing/Pharmaceutical Manufacturing Facility (rBMN-42 Production)
+
+---
+
+## What You'll Find in This Document
+
+| Section | Best For | Jump To |
+|---------|----------|---------|
+| Executive Summary | Everyone - Start here | [Read](#executive-summary) |
+| Semantic Foundations | ISA-95/ISA-88 alignment, flat hierarchy | [Read](#semantic-foundations) |
+| Equipment Taxonomy | Equipment types and process stages | [Read](#equipment-type-taxonomy) |
+| Data Type Specifications | Understanding value formats | [Read](#data-type-specifications) |
+| Quick Start Guide | Getting your first data point | [Read](#quick-start-guide) |
+| Common Use Cases | Real-world examples | [Read](#common-use-cases) |
+| Hierarchy Structure | Understanding the data model | [Read](#hierarchy-structure) |
+| Topic Reference | Building query paths | [Read](#topic-structure-reference) |
+| Site Details | Asset-specific lookups | [Read](#equipment-detailed-documentation) |
+| Quick Reference Cards | Cheat sheets for daily work | [Read](#quick-reference-cards) |
+| Complete Asset Registry | All topic paths | [Read](#complete-asset-registry) |
+| Glossary | Term definitions | [Read](#glossary) |
+
+---
+
+## Executive Summary
+
+### What is the Unified Namespace?
+
+The Unified Namespace (UNS) is a single, organized structure that contains all operational data from Enterprise C's bioprocessing operations. Think of it as a filing system where every piece of equipment, every sensor reading, every batch phase, and every operator acknowledgment has a specific, predictable address.
+
+Instead of navigating multiple DCS screens, batch historians, and SCADA systems to find data, the UNS gives you one consistent way to access everything.
+
+**Before UNS:**
+- "Where do I find the bioreactor dissolved oxygen? Is it in DeltaV? The batch historian? The paper batch record?"
+
+**With UNS:**
+- `Enterprise C/sub/AIC-250-001_PV_percent`
+
+Every data point has a clear, logical path that follows your process train's structure.
+
+### Who Should Use This Documentation?
+
+| Role | What You'll Use This For |
+|------|--------------------------|
+| **Bioprocess Engineers** | Monitor fermentation parameters, analyze batch deviations, optimize process setpoints |
+| **Manufacturing Operators** | Check equipment status, respond to operator prompts, verify batch phases |
+| **Quality/Validation Engineers** | Trace batch context, verify GMP compliance, investigate deviations |
+| **Automation Engineers** | Integrate with batch systems, configure alarms, build trending displays |
+| **IT/Integration Teams** | Build dashboards, connect to MES, set up automated alerts |
+| **Data Scientists** | Query historical data, build predictive models, analyze batch-to-batch variability |
+
+### What Data is Available?
+
+The UNS provides access to four categories of data across 4 process skids:
+
+| Data Category | What It Contains | Example Questions It Answers |
+|---------------|------------------|------------------------------|
+| **Batch Context** | Recipe, Phase, State, Batch ID, Formula | "What phase is the bioreactor in?" "What batch is running?" |
+| **Process Variables** | Temperature, pH, DO, Pressure, Flow, Conductivity, UV | "What's the bioreactor DO?" "What's the TFF transmembrane pressure?" |
+| **Control Data** | Setpoints, Outputs, Modes, Valve States | "What's the agitator speed setpoint?" "Is the transfer valve open?" |
+| **Operator Prompts** | Acknowledgments, Verification Steps | "Has the operator acknowledged the media addition?" |
+
+### Enterprise at a Glance
+
+```
+Enterprise C (Bioprocessing/Pharmaceutical Manufacturing)
+    |
+    +-- Product: rBMN-42 (Recombinant Biologic)
+    |
+    +-- Process Train (Single Product Flow)
+            |
+            +-- SUM500: 500L Media Preparation
+            |       Prepares cell culture media
+            |       Tags: 27 | Current Phase: PH_SUM_XFR
+            |
+            +-- UNIT-250: 250L Bioreactor (Upstream)
+            |       Cell culture and biologic production
+            |       Tags: 84 | Current Phase: PH_SUB_FEED2
+            |
+            +-- CHR01: Chromatography Skid (Downstream)
+            |       Protein purification
+            |       Tags: 51 | Current Phase: FLUSH
+            |
+            +-- TFF300: Tangential Flow Filtration (Downstream)
+                    Concentration and buffer exchange
+                    Tags: 26 | Current Phase: IDLE
+```
+
+**Total:** 1 Enterprise | 4 Process Units | 188 Tags | Single Product Train
+
+> **Key Difference from Enterprise A/B:** Enterprise C uses a **flat hierarchy** (Enterprise -> Device -> Tags) rather than the Site/Area/Line/Equipment structure used in discrete manufacturing. This reflects the batch-centric nature of bioprocessing where process units operate as integrated systems.
+
+---
+
+## Semantic Foundations
+
+### ISA-95 Hierarchy Alignment
+
+Enterprise C uses a simplified, flat hierarchy aligned with ISA-95 but adapted for batch bioprocessing:
+
+| UNS Level | ISA-95 Role | Term | Definition |
+|-----------|-------------|------|------------|
+| 1 | Enterprise | **Enterprise** | The top-level organizational entity (Enterprise C) |
+| 2 | Process Cell | **Device** | Individual process skids/units (chrom, sub, sum, tff) |
+| 3 | - | **Tag** | Individual measurements, setpoints, and control values |
+
+> **Note:** Unlike Enterprise A (glass manufacturing) and Enterprise B (beverage filling), Enterprise C does not use intermediate Site, Area, or Line levels. The flat structure reflects how bioprocessing skids operate as self-contained process cells within a single facility.
+
+### ISA-88 Batch Control Alignment
+
+Enterprise C follows ISA-88 (S88) procedural control model for batch manufacturing:
+
+| S88 Concept | UNS Implementation | Example |
+|-------------|-------------------|---------|
+| **Recipe** | `RECIPE` tag | PR_SUB_PROC, PR_SUM_MEDIA, PROC, PROCESS |
+| **Formula** | `FORMULA` tag | rBMN-42 (the product being manufactured) |
+| **Procedure** | Recipe execution | The complete batch operation |
+| **Unit Procedure** | Phase sequences | Fermentation, Purification |
+| **Phase** | `PHASE` tag | PH_SUB_FEED2, FLUSH, PH_SUM_XFR |
+| **State** | `STATE` tag | Running, Idle, Complete, Holding |
+| **Batch ID** | `BATCH_ID` tag | Unique batch identifier |
+
+### Hierarchy Relationships
+
+The UNS uses a direct containment model:
+
+```
+Enterprise ──contains──> Device ──contains──> Tags
+```
+
+| Relationship | How It's Expressed | Example |
+|--------------|-------------------|---------|
+| Enterprise | Root namespace | Enterprise C |
+| Process Unit | Device segment | sub (bioreactor), chrom (chromatography) |
+| Measurement | Tag name | AIC-250-001_PV_percent (dissolved oxygen) |
+
+### Bioprocessing Process Flow
+
+Understanding the process flow helps you navigate the UNS:
+
+```
+Media Prep --> Inoculation --> Cell Culture --> Harvest --> Purification --> Concentration
+    |              |              |               |             |                |
+  SUM500       UNIT-250        UNIT-250       UNIT-250       CHR01           TFF300
+    |              |              |               |             |                |
+ PR_SUM_MEDIA  PR_SUB_PROC    PR_SUB_PROC    PR_SUB_PROC     PROC           PROCESS
+```
+
+---
+
+## Equipment Type Taxonomy
+
+### Classification by Process Stage
+
+Enterprise C equipment is classified by its role in the bioprocess:
+
+| Process Stage | Characteristics | Equipment | Key Functions |
+|---------------|-----------------|-----------|---------------|
+| **Media Preparation** | Batch mixing, transfer | SUM500 | Dissolve media components, pH adjustment, transfer to bioreactor |
+| **Upstream (Cell Culture)** | Fed-batch fermentation | UNIT-250 | Cell growth, product expression, harvest |
+| **Downstream (Purification)** | Chromatographic separation | CHR01 | Protein capture, intermediate purification, polishing |
+| **Downstream (Concentration)** | Membrane filtration | TFF300 | Ultrafiltration, diafiltration, buffer exchange |
+
+### Equipment by Process Type
+
+| Process Type | Equipment | Key Sensors | Control Type |
+|--------------|-----------|-------------|--------------|
+| **Mixing/Transfer** | SUM500 | Temperature, pH, Weight | Batch sequencing |
+| **Bioreaction** | UNIT-250 | DO, pH, Temperature, Weight, Gas Flows | Cascade/feedback control |
+| **Chromatography** | CHR01 | UV, pH, Conductivity, Pressure, Flow | Gradient control |
+| **Filtration** | TFF300 | TMP, Flux, Conductivity, UV | Pressure/flow control |
+
+### Equipment Capabilities Matrix
+
+| Equipment | Has Batch Context | Has Process Vars | Has Control Loops | Has Operator Prompts |
+|-----------|-------------------|------------------|-------------------|----------------------|
+| SUM500 | Yes | Temperature, pH, Weight | Pump speeds, Valves | Yes |
+| UNIT-250 | Yes | DO, pH, Temp, Weight, Gas | Agitator, Pumps, Valves | Yes |
+| CHR01 | Yes | UV, pH, Conductivity, Flow, Pressure | Gradient pumps, Valves | Yes |
+| TFF300 | Yes | TMP, Flux, Conductivity, UV | Feed pump, Valves | Yes |
+
+### Tag Naming Convention
+
+Enterprise C uses equipment-specific tag naming with engineering units embedded:
+
+| Pattern | Meaning | Examples |
+|---------|---------|----------|
+| **AIC-###-###** | Analytical Indicator Controller | AIC-250-001_PV_percent (DO), AIC-250-003_PV_pH |
+| **TIC-###-###** | Temperature Indicator Controller | TIC-250-001_PV_Celsius |
+| **FIC-###-###** | Flow Indicator Controller | FIC-250-001_PV_SLPM |
+| **SIC-###-###** | Speed Indicator Controller | SIC-250-008_PV_RPM |
+| **PIC-###-###** | Pressure Indicator Controller | PIC-250-001_PV_psi |
+| **WI-###-###** | Weight Indicator | WI-250-001_PV_kg |
+| **HV-###-###** | Hand Valve (On/Off) | HV-250-001_PV |
+| **FCV-###-###** | Flow Control Valve | FCV-250-001_PV_percent |
+
+| Suffix | Meaning | Description |
+|--------|---------|-------------|
+| **_PV** | Process Variable | Current measured value |
+| **_SP** | Setpoint | Target value |
+| **_percent** | Percentage | Value in % |
+| **_Celsius** | Temperature | Value in degrees C |
+| **_RPM** | Speed | Value in rotations per minute |
+| **_SLPM** | Gas Flow | Standard liters per minute |
+| **_kg** | Weight | Value in kilograms |
+| **_pH** | pH | Hydrogen ion concentration |
+
+---
+
+## Data Type Specifications
+
+### Process Variable Types
+
+| Data Type | Description | Typical Range | Unit |
+|-----------|-------------|---------------|------|
+| **Temperature** | Process temperature | 15-40 | C |
+| **pH** | Hydrogen ion concentration | 4.0-8.5 | pH units |
+| **Dissolved Oxygen (DO)** | Oxygen saturation | 0-100 | % |
+| **Conductivity** | Ionic strength | 0-100 | mS/cm |
+| **UV Absorbance** | Protein detection | 0-5 | AU |
+| **Pressure** | System pressure | 0-100 | psi or bar |
+| **Flow Rate** | Liquid flow | 0-1000 | L/hr or mL/min |
+| **Weight** | Vessel contents | 0-500 | kg |
+| **TMP** | Transmembrane Pressure | 0-50 | psi |
+
+### Control Data Types
+
+| Data Type | Description | Range | Example |
+|-----------|-------------|-------|---------|
+| **Setpoint (SP)** | Target value for control | Varies | TIC-250-001_SP_Celsius = 30.0 |
+| **Output** | Controller output | 0-100% | FCV-250-001_PV_percent = 45.2 |
+| **Mode** | Control mode | AUTO/MANUAL/CASCADE | TIC-250-001_MODE = AUTO |
+| **Status** | Equipment status | ON/OFF/FAULT | SIC-250-003_STATUS = ON |
+| **Valve State** | Valve position | OPEN/CLOSED | HV-250-001_PV = OPEN |
+
+### Batch Context Types
+
+| Field | Data Type | Description | Example |
+|-------|-----------|-------------|---------|
+| `BATCH_ID` | String | Unique batch identifier | "2025111742502" |
+| `RECIPE` | String | Active recipe name | "PR_SUB_PROC" |
+| `FORMULA` | String | Product formula | "rBMN-42" |
+| `PHASE` | String | Current procedural phase | "PH_SUB_FEED2" |
+| `STATE` | String | Current equipment state | "Running" |
+
+### Operator Prompt Types
+
+| Field | Data Type | Description |
+|-------|-----------|-------------|
+| `PRMP_MSG` | String | Message displayed to operator |
+| `MSG_ACK` | Boolean | Has prompt been acknowledged |
+| `MSG_USER` | String | User who acknowledged |
+| `OPR_VRF` | Boolean | Operator verification status |
+
+---
+
+## Quick Start Guide
+
+### Your First Query in 3 Steps
+
+**Goal:** Find the current dissolved oxygen (DO) in the 250L bioreactor
+
+**Step 1: Start with the Enterprise**
+```
+Enterprise C/
+```
+
+**Step 2: Add the device**
+```
+Enterprise C/sub/
+```
+
+**Step 3: Add the specific tag**
+```
+Enterprise C/sub/AIC-250-001_PV_percent
+```
+
+That's it. This path gives you the real-time dissolved oxygen value (currently ~31.44%).
+
+### Understanding the Path Structure
+
+Every UNS path follows this pattern:
+
+```
+{Enterprise} / {Device} / {Tag}
+      |            |         |
+      |            |         +-- The specific measurement with units
+      |            +-- Process unit (sub, chrom, sum, tff)
+      +-- Enterprise C
+```
+
+### Device Short Names
+
+| Short Name | Full Equipment Name | Description |
+|------------|---------------------|-------------|
+| `sub` | UNIT-250 | 250L Bioreactor (Upstream) |
+| `chrom` | CHR01 | Chromatography Skid |
+| `sum` | SUM500 | 500L Media Preparation |
+| `tff` | TFF300 | Tangential Flow Filtration |
+
+> **Tip:** Device names in paths use the short codes (sub, chrom, sum, tff), not the full equipment names.
+
+---
+
+## Common Use Cases
+
+### Scenario 1: Operator Checking Bioreactor Status
+
+**Situation:** You need to verify the bioreactor is operating within normal parameters during the feed phase.
+
+**Paths to query:**
+
+| Metric | Path | Expected Value |
+|--------|------|----------------|
+| Dissolved Oxygen | `Enterprise C/sub/AIC-250-001_PV_percent` | 30-35% |
+| pH | `Enterprise C/sub/AIC-250-003_PV_pH` | 5.3-5.5 |
+| Temperature | `Enterprise C/sub/TIC-250-001_PV_Celsius` | 29.5-30.5 C |
+| Agitator Speed | `Enterprise C/sub/SIC-250-008_PV_RPM` | 400-420 RPM |
+| Vessel Weight | `Enterprise C/sub/WI-250-001_PV_kg` | ~200 kg |
+| Current Phase | `Enterprise C/sub/UNIT-250_PHASE` | PH_SUB_FEED2 |
+| Batch State | `Enterprise C/sub/UNIT-250_STATE` | Running |
+
+**Normal operating values for PH_SUB_FEED2 phase:**
+- DO: 30-35% (cascade controlled)
+- pH: 5.3-5.5 (controlled via base addition)
+- Temperature: 29.5-30.5 C (jacket controlled)
+- Agitator: 400-420 RPM
+- State: Running
+
+---
+
+### Scenario 2: Engineer Investigating Batch Deviation
+
+**Situation:** Quality reported a deviation in a batch. You need to trace the process conditions.
+
+**Step 1: Verify batch context**
+
+| Data Point | Path |
+|------------|------|
+| Batch ID | `Enterprise C/sub/UNIT-250_BATCH_ID` |
+| Recipe | `Enterprise C/sub/UNIT-250_RECIPE` |
+| Formula | `Enterprise C/sub/UNIT-250_FORMULA` |
+| Current Phase | `Enterprise C/sub/UNIT-250_PHASE` |
+
+**Step 2: Check critical process parameters**
+
+For bioreactor deviations:
+
+| Parameter | PV Path | SP Path |
+|-----------|---------|---------|
+| DO | `.../sub/AIC-250-001_PV_percent` | `.../sub/AIC-250-001_SP_percent` |
+| pH | `.../sub/AIC-250-003_PV_pH` | `.../sub/AIC-250-003_SP_pH` |
+| Temperature | `.../sub/TIC-250-001_PV_Celsius` | `.../sub/TIC-250-001_SP_Celsius` |
+
+**Step 3: Check downstream if harvest is complete**
+
+If investigating purification:
+
+| Parameter | Path | What It Indicates |
+|-----------|------|-------------------|
+| CHR01 UV | `.../chrom/CHR01_AT003_PV` | Protein breakthrough |
+| CHR01 Conductivity | `.../chrom/CHR01_AT002_PV` | Buffer conditions |
+| CHR01 Phase | `.../chrom/CHR01_PHASE_PV` | Current step |
+
+---
+
+### Scenario 3: Building a Process Monitoring Dashboard
+
+**Situation:** Operations wants a dashboard showing the entire process train status.
+
+**Critical parameters by unit:**
+
+**SUM500 (Media Prep):**
+```
+Enterprise C/sum/TIC501-PV_Celsius      -- Temperature
+Enterprise C/sum/PHASE_ID               -- Current phase
+Enterprise C/sum/SUM500-STATUS          -- Equipment state
+```
+
+**UNIT-250 (Bioreactor):**
+```
+Enterprise C/sub/AIC-250-001_PV_percent   -- Dissolved oxygen
+Enterprise C/sub/AIC-250-003_PV_pH        -- pH
+Enterprise C/sub/TIC-250-001_PV_Celsius   -- Temperature
+Enterprise C/sub/SIC-250-008_PV_RPM       -- Agitator speed
+Enterprise C/sub/WI-250-001_PV_kg         -- Vessel weight
+Enterprise C/sub/UNIT-250_PHASE           -- Current phase
+Enterprise C/sub/UNIT-250_STATE           -- Equipment state
+```
+
+**CHR01 (Chromatography):**
+```
+Enterprise C/chrom/CHR01_AT003_PV         -- UV absorbance
+Enterprise C/chrom/CHR01_AT001_PV         -- pH
+Enterprise C/chrom/CHR01_AT002_PV         -- Conductivity
+Enterprise C/chrom/CHR01_FT001_PV         -- Flow rate
+Enterprise C/chrom/CHR01_PHASE_PV         -- Current phase
+```
+
+**TFF300 (Filtration):**
+```
+Enterprise C/tff/TMP7M_psig               -- Transmembrane pressure
+Enterprise C/tff/CI8R_mS/cm               -- Conductivity
+Enterprise C/tff/UV8R_AU                  -- UV absorbance
+Enterprise C/tff/phase                    -- Current phase
+```
+
+---
+
+### Scenario 4: Tracing Batch Through Process Train
+
+**Situation:** You need to follow a batch from media prep through final concentration.
+
+**Query batch context at each unit:**
+
+| Unit | Batch ID Path | Phase Path | State Path |
+|------|---------------|------------|------------|
+| SUM500 | `.../sum/BATCH_ID` | `.../sum/PHASE_ID` | `.../sum/SUM500-STATUS` |
+| UNIT-250 | `.../sub/UNIT-250_BATCH_ID` | `.../sub/UNIT-250_PHASE` | `.../sub/UNIT-250_STATE` |
+| CHR01 | `.../chrom/CHR01-BATCH-ID` | `.../chrom/CHR01_PHASE_PV` | `.../chrom/CHR01_STATE_PV` |
+| TFF300 | `.../tff/TFF300-BATCH-ID` | `.../tff/phase` | (see phase) |
+
+**Expected phase progression:**
+
+| Unit | Typical Phases | Duration |
+|------|----------------|----------|
+| SUM500 | PH_SUM_PREP -> PH_SUM_MIX -> PH_SUM_XFR | 4-6 hours |
+| UNIT-250 | PH_SUB_INOC -> PH_SUB_GROWTH -> PH_SUB_FEED1 -> PH_SUB_FEED2 -> PH_SUB_HARVEST | 5-7 days |
+| CHR01 | EQUILIBRATE -> LOAD -> WASH -> ELUTE -> STRIP -> CIP -> FLUSH | 8-12 hours per step |
+| TFF300 | SETUP -> CONCENTRATE -> DIAFILTRATION -> FINAL -> CIP | 6-10 hours |
+
+---
+
+## Hierarchy Structure
+
+The following diagram shows the complete organizational structure of Enterprise C.
+
+```
+ENTERPRISE C (Bioprocessing Facility)
+|
++-- Enterprise C/
+    |
+    +-- metadata/ (System metadata)
+    |   +-- factory_id
+    |   +-- generated_at
+    |   +-- sparkplugEnabled
+    |   +-- virtual_devices.*
+    |
+    +-- sum/ (SUM500 - 500L Media Preparation)
+    |   +-- BATCH_ID, RECIPE_ID, SUM500-FORMULA-NAME, PHASE_ID, SUM500-STATUS
+    |   +-- TIC501-PV_Celsius, TIC501-SP_Celsius (Temperature)
+    |   +-- AI501-PV_pH (pH)
+    |   +-- WI501-PV_kg (Weight)
+    |   +-- SIC501-PV_RPM, SIC501-SP_RPM (Agitator)
+    |   +-- SIC501A-PV_LPM, SIC502-PV_LPM, SIC503-PV_LPM, SIC504-PV_LPM (Pumps)
+    |   +-- XV501-PV through XV504-PV (Valves)
+    |   +-- PRMP_MSG1, OPR_ID, OPR_VRF (Operator prompts)
+    |
+    +-- sub/ (UNIT-250 - 250L Bioreactor)
+    |   +-- UNIT-250_BATCH_ID, UNIT-250_RECIPE, UNIT-250_FORMULA, UNIT-250_PHASE, UNIT-250_STATE
+    |   +-- TIC-250-001_PV_Celsius, TIC-250-001_SP_Celsius (Temperature)
+    |   +-- TIC-250-002_PV_Celsius, TIC-250-002_SP_Celsius (Jacket Temperature)
+    |   +-- AIC-250-001_PV_percent, AIC-250-001_SP_percent (Dissolved Oxygen)
+    |   +-- AIC-250-003_PV_pH, AIC-250-003_SP_pH (pH)
+    |   +-- SIC-250-008_PV_RPM, SIC-250-008_SP_RPM (Agitator speed)
+    |   +-- WI-250-001_PV_kg (Vessel weight)
+    |   +-- FIC-250-001_PV_SLPM, FIC-250-002_PV_SLPM, FIC-250-003_PV_SLPM (Gas flows)
+    |   +-- SIC-250-003 through SIC-250-006, SIC-250-MEDIA (Pumps)
+    |   +-- FCV-250-001 through FCV-250-003 (Flow control valves)
+    |   +-- HV-250-001 through HV-250-005 (Hand valves)
+    |   +-- UNIT-250_MSG1, UNIT-250_MSG1_ACK, UNIT-250_MSG1_USER (Operator prompts)
+    |
+    +-- chrom/ (CHR01 - Chromatography Skid)
+    |   +-- CHR01-BATCH-ID, CHR01-RECIPE-NAME, CHR01-FORMULA-NAME, CHR01_PHASE_PV, CHR01_STATE_PV
+    |   +-- CHR01_TT001_PV (Column temperature)
+    |   +-- CHR01_AT003_PV (UV detector - 280nm)
+    |   +-- CHR01_AT001_PV (pH post-column)
+    |   +-- CHR01_AT002_PV (Conductivity post-column)
+    |   +-- CHR01_FT001_PV (Flow rate)
+    |   +-- CHR01_PT002_PV, CHR01_PT003_PV (Pressure)
+    |   +-- CHR01_P001A_PV, CHR01_P001B_PV (Gradient pumps)
+    |   +-- CHR01_V001_PV through CHR01_V006_PV (Valves)
+    |   +-- CHR01_PROD_PV, CHR01_WASTE_PV (Product/Waste routing)
+    |   +-- CHR01_PROMPT_MSG_PV, CHR01_PROMPT_ACK_PV (Operator prompts)
+    |
+    +-- tff/ (TFF300 - Tangential Flow Filtration)
+        +-- TFF300-BATCH-ID, TFF300-RECIPE-NAME, TFF300-FORMULA-NAME, phase
+        +-- TMP7M_psig (Transmembrane pressure)
+        +-- FX7F_LMH, FX8P_LMH (Permeate flux)
+        +-- CI8R_mS/cm (Conductivity)
+        +-- UV8R_AU (UV absorbance)
+        +-- TI8R_Celsius (Temperature)
+        +-- FI7F_LPM, FI8P_LPM (Flow rates)
+        +-- PI5R8_psig, PI7F_psig, PI8R_psig, DPI7M_psig (Pressures)
+        +-- P5R5_percent, P8P7_percent, P9A1_percent, P9A2_percent (Pump outputs)
+        +-- PCV7X_percent (Pressure control valve)
+        +-- WI17K_kg (Retentate weight)
+        +-- PRMP_MSG, PRMP_TMR_SEC, OPR_ID (Operator prompts)
+```
+
+---
+
+## Topic Structure Reference
+
+### How Topics Are Organized
+
+Every device has data organized into logical categories:
+
+```
+Enterprise C/{device}/
+    |
+    +-- Batch Context
+    |       {UNIT}_BATCH_ID, {UNIT}_RECIPE, {UNIT}_FORMULA, {UNIT}_PHASE, {UNIT}_STATE
+    |
+    +-- Analytical Measurements
+    |       AIC-*_PV (DO, pH) or CHR01_AT*_PV (pH, Cond, UV)
+    |
+    +-- Temperature Control
+    |       TIC-*_PV_Celsius, TIC-*_SP_Celsius
+    |
+    +-- Flow Control
+    |       FIC-*_PV_SLPM, FIC-*_SP_SLPM
+    |
+    +-- Pressure Monitoring
+    |       PIC-*_PV_psi, PI*_psig
+    |
+    +-- Weight Measurement
+    |       WI-*_PV_kg
+    |
+    +-- Speed Control
+    |       SIC-*_PV_RPM, SIC-*_SP_RPM
+    |
+    +-- Valves
+    |       HV-*_PV, XV*-PV, CHR01_V*_PV
+    |
+    +-- Pumps
+    |       SIC-*_PV_L_per_min, P*_percent
+    |
+    +-- Operator Interface
+            PRMP_MSG, MSG_ACK, OPR_ID
+```
+
+---
+
+## Equipment Detailed Documentation
+
+### SUM500 - 500L Media Preparation
+
+**Path Prefix:** `Enterprise C/sum/`
+
+| Property | Value |
+|----------|-------|
+| **Equipment ID** | SUM500 |
+| **Device Code** | sum |
+| **Purpose** | Cell culture media preparation and transfer |
+| **Capacity** | 500 liters |
+| **Current Phase** | PH_SUM_XFR |
+| **Status** | IDLE |
+| **Recipe** | PR_SUM_MEDIA |
+| **Formula** | rBMN-42 |
+| **Total Tags** | 27 |
+
+**Key Process Variables:**
+
+| Tag | Description | Typical Value | Unit |
+|-----|-------------|---------------|------|
+| TIC501-PV_Celsius | Temperature | 20 | C |
+| AI501-PV_pH | pH | 7.0 | pH |
+| WI501-PV_kg | Vessel weight | Variable | kg |
+| SIC501-PV_RPM | Agitator speed | 150 | RPM |
+
+**Batch Context Tags:**
+
+| Tag | Current Value |
+|-----|---------------|
+| RECIPE_ID | PR_SUM_MEDIA |
+| SUM500-FORMULA-NAME | rBMN-42 |
+| PHASE_ID | PH_SUM_XFR |
+| SUM500-STATUS | IDLE |
+
+---
+
+### UNIT-250 - 250L Bioreactor (Upstream)
+
+**Path Prefix:** `Enterprise C/sub/`
+
+| Property | Value |
+|----------|-------|
+| **Equipment ID** | UNIT-250 |
+| **Device Code** | sub |
+| **Purpose** | Cell culture for biologic production |
+| **Capacity** | 250 liters |
+| **Current Phase** | PH_SUB_FEED2 |
+| **Status** | Running |
+| **Recipe** | PR_SUB_PROC |
+| **Formula** | rBMN-42 |
+| **Total Tags** | 84 |
+
+**Key Process Variables:**
+
+| Tag | Description | Typical Value | Unit |
+|-----|-------------|---------------|------|
+| AIC-250-001_PV_percent | Dissolved Oxygen | 31.44 | % |
+| AIC-250-003_PV_pH | pH | 5.50 | pH |
+| TIC-250-001_PV_Celsius | Temperature | 30.22 | C |
+| SIC-250-008_PV_RPM | Agitator Speed | 409.74 | RPM |
+| WI-250-001_PV_kg | Vessel Weight | 199.17 | kg |
+
+**Gas Flow Tags:**
+
+| Tag | Description | Unit |
+|-----|-------------|------|
+| FIC-250-001_PV_SLPM | Air sparge flow | SLPM |
+| FIC-250-002_PV_SLPM | Oxygen overlay flow | SLPM |
+| FIC-250-003_PV_SLPM | CO2 flow (pH control) | SLPM |
+
+**Control Setpoints:**
+
+| Tag | Description | Typical SP |
+|-----|-------------|------------|
+| AIC-250-001_SP_percent | DO setpoint | 30 % |
+| AIC-250-003_SP_pH | pH setpoint | 5.4 |
+| TIC-250-001_SP_Celsius | Temperature setpoint | 30 C |
+| SIC-250-008_SP_RPM | Agitator setpoint | 400 RPM |
+
+**Batch Context Tags:**
+
+| Tag | Current Value |
+|-----|---------------|
+| UNIT-250_BATCH_ID | 2025111742502 |
+| UNIT-250_RECIPE | PR_SUB_PROC |
+| UNIT-250_FORMULA | rBMN-42 |
+| UNIT-250_PHASE | PH_SUB_FEED2 |
+| UNIT-250_STATE | Running |
+
+---
+
+### CHR01 - Chromatography Skid (Downstream)
+
+**Path Prefix:** `Enterprise C/chrom/`
+
+| Property | Value |
+|----------|-------|
+| **Equipment ID** | CHR01 |
+| **Device Code** | chrom |
+| **Purpose** | Protein purification via chromatography |
+| **Current Phase** | FLUSH |
+| **Status** | Idle |
+| **Recipe** | PROC |
+| **Formula** | rBMN-42 |
+| **Total Tags** | 51 |
+
+**Key Process Variables:**
+
+| Tag | Description | Typical Value | Unit |
+|-----|-------------|---------------|------|
+| CHR01_AT001_PV | pH (post-column) | 7.2 | pH |
+| CHR01_AT002_PV | Conductivity (post-column) | 0.3 | mS/cm |
+| CHR01_AT003_PV | UV Absorbance (280nm) | 0.02 | AU |
+| CHR01_TT001_PV | Column Temperature | 18 | C |
+| CHR01_FT001_PV | Flow Rate | Variable | mL/min |
+| CHR01_PT002_PV | Column Outlet Pressure | Variable | bar |
+
+**Pump Control Tags:**
+
+| Tag | Description |
+|-----|-------------|
+| CHR01_P001A_PV | Main system pump A speed |
+| CHR01_P001B_PV | Gradient pump B speed |
+
+**Batch Context Tags:**
+
+| Tag | Current Value |
+|-----|---------------|
+| CHR01-RECIPE-NAME | PROC |
+| CHR01-FORMULA-NAME | rBMN-42 |
+| CHR01_PHASE_PV | FLUSH |
+| CHR01_STATE_PV | Idle |
+
+**Typical Phase Sequence:**
+1. EQUILIBRATE - Column preparation
+2. LOAD - Sample application
+3. WASH - Impurity removal
+4. ELUTE - Product elution
+5. STRIP - Column regeneration
+6. CIP - Clean-in-place
+7. FLUSH - System rinse
+
+---
+
+### TFF300 - Tangential Flow Filtration (Downstream)
+
+**Path Prefix:** `Enterprise C/tff/`
+
+| Property | Value |
+|----------|-------|
+| **Equipment ID** | TFF300 |
+| **Device Code** | tff |
+| **Purpose** | Protein concentration and buffer exchange |
+| **Current Phase** | IDLE |
+| **Status** | Idle |
+| **Recipe** | PROCESS |
+| **Formula** | rBMN-42 |
+| **Total Tags** | 26 |
+
+**Key Process Variables:**
+
+| Tag | Description | Typical Value | Unit |
+|-----|-------------|---------------|------|
+| TMP7M_psig | Transmembrane Pressure | 0 | psi |
+| FX7F_LMH | Permeate Flux | 0 | LMH |
+| CI8R_mS/cm | Conductivity | 10 | mS/cm |
+| UV8R_AU | UV Absorbance | 0.03 | AU |
+| TI8R_Celsius | Temperature | 20 | C |
+
+**Control Tags:**
+
+| Tag | Description | Unit |
+|-----|-------------|------|
+| P5R5_percent | Feed pump output | % |
+| FI7F_LPM | Feed flow | L/min |
+| FI8P_LPM | Permeate flow | L/min |
+| WI17K_kg | Retentate weight | kg |
+
+**Batch Context Tags:**
+
+| Tag | Current Value |
+|-----|---------------|
+| TFF300-RECIPE-NAME | PROCESS |
+| TFF300-FORMULA-NAME | rBMN-42 |
+| phase | IDLE |
+
+**Typical Phase Sequence:**
+1. SETUP - System preparation
+2. CONCENTRATE - Initial concentration
+3. DIAFILTRATION - Buffer exchange cycles
+4. FINAL - Final concentration
+5. RECOVERY - Product recovery
+6. CIP - Clean-in-place
+
+---
+
+## Quick Reference Cards
+
+### Card 1: Bioreactor Quick Reference
+
+```
++------------------------------------------------------------------+
+|  UNIT-250 BIOREACTOR - Path: Enterprise C/sub/                   |
++------------------------------------------------------------------+
+|                                                                  |
+|  BATCH CONTEXT                                                   |
+|  -------------------------------------------------------         |
+|  UNIT-250_BATCH_ID    Current batch identifier                   |
+|  UNIT-250_RECIPE      PR_SUB_PROC                                |
+|  UNIT-250_FORMULA     rBMN-42                                    |
+|  UNIT-250_PHASE       Current phase (e.g., PH_SUB_FEED2)         |
+|  UNIT-250_STATE       Running, Idle, Holding, Complete           |
+|                                                                  |
+|  CRITICAL PROCESS PARAMETERS                                     |
+|  -------------------------------------------------------         |
+|  AIC-250-001_PV_percent   Dissolved Oxygen (target: 30%)         |
+|  AIC-250-003_PV_pH        pH (target: 5.4)                       |
+|  TIC-250-001_PV_Celsius   Temperature (target: 30 C)             |
+|  SIC-250-008_PV_RPM       Agitator speed (target: 400 RPM)       |
+|  WI-250-001_PV_kg         Vessel weight (kg)                     |
+|                                                                  |
+|  GAS FLOWS                                                       |
+|  -------------------------------------------------------         |
+|  FIC-250-001_PV_SLPM      Air sparge (SLPM)                      |
+|  FIC-250-002_PV_SLPM      Oxygen overlay (SLPM)                  |
+|  FIC-250-003_PV_SLPM      CO2 for pH control (SLPM)              |
+|                                                                  |
+|  PHASE SEQUENCE                                                  |
+|  -------------------------------------------------------         |
+|  PH_SUB_INOC   -> PH_SUB_GROWTH -> PH_SUB_FEED1                  |
+|  PH_SUB_FEED2  -> PH_SUB_HARVEST                                 |
+|                                                                  |
++------------------------------------------------------------------+
+```
+
+### Card 2: Chromatography Quick Reference
+
+```
++------------------------------------------------------------------+
+|  CHR01 CHROMATOGRAPHY - Path: Enterprise C/chrom/                |
++------------------------------------------------------------------+
+|                                                                  |
+|  BATCH CONTEXT                                                   |
+|  -------------------------------------------------------         |
+|  CHR01-BATCH-ID       Current batch identifier                   |
+|  CHR01-RECIPE-NAME    PROC                                       |
+|  CHR01_PHASE_PV       Current step (LOAD, WASH, ELUTE, etc.)     |
+|  CHR01_STATE_PV       Running, Idle                              |
+|                                                                  |
+|  INLINE ANALYTICS                                                |
+|  -------------------------------------------------------         |
+|  CHR01_AT003_PV       UV absorbance (AU) - Protein detection     |
+|  CHR01_AT001_PV       pH (post-column)                           |
+|  CHR01_AT002_PV       Conductivity (mS/cm)                       |
+|                                                                  |
+|  COLUMN MONITORING                                               |
+|  -------------------------------------------------------         |
+|  CHR01_TT001_PV       Column temperature (C)                     |
+|  CHR01_FT001_PV       Flow rate (mL/min)                         |
+|  CHR01_PT002_PV       Column outlet pressure (bar)               |
+|  CHR01_PT003_PV       Delta pressure (bar)                       |
+|                                                                  |
+|  PUMP CONTROL                                                    |
+|  -------------------------------------------------------         |
+|  CHR01_P001A_PV       Main pump A speed                          |
+|  CHR01_P001B_PV       Gradient pump B speed                      |
+|                                                                  |
+|  PHASE SEQUENCE                                                  |
+|  -------------------------------------------------------         |
+|  EQUILIBRATE -> LOAD -> WASH -> ELUTE -> STRIP -> CIP -> FLUSH   |
+|                                                                  |
++------------------------------------------------------------------+
+```
+
+### Card 3: TFF Quick Reference
+
+```
++------------------------------------------------------------------+
+|  TFF300 FILTRATION - Path: Enterprise C/tff/                     |
++------------------------------------------------------------------+
+|                                                                  |
+|  BATCH CONTEXT                                                   |
+|  -------------------------------------------------------         |
+|  TFF300-BATCH-ID      Current batch identifier                   |
+|  TFF300-RECIPE-NAME   PROCESS                                    |
+|  phase                Current step (CONCENTRATE, DIAFILT, etc.)  |
+|                                                                  |
+|  KEY PARAMETERS                                                  |
+|  -------------------------------------------------------         |
+|  TMP7M_psig           Transmembrane pressure (psi)               |
+|  FX7F_LMH             Permeate flux (LMH)                        |
+|  CI8R_mS/cm           Conductivity (mS/cm) - Buffer exchange     |
+|  UV8R_AU              UV absorbance (AU) - Product loss          |
+|                                                                  |
+|  CONTROL POINTS                                                  |
+|  -------------------------------------------------------         |
+|  P5R5_percent         Feed pump output (%)                       |
+|  FI7F_LPM             Feed flow (L/min)                          |
+|  WI17K_kg             Retentate weight (kg)                      |
+|  TI8R_Celsius         Temperature (C)                            |
+|                                                                  |
+|  PHASE SEQUENCE                                                  |
+|  -------------------------------------------------------         |
+|  SETUP -> CONCENTRATE -> DIAFILTRATION -> FINAL -> CIP           |
+|                                                                  |
++------------------------------------------------------------------+
+```
+
+### Card 4: Tag Naming Decoder
+
+```
++------------------------------------------------------------------+
+|  TAG NAMING REFERENCE                                            |
++------------------------------------------------------------------+
+|                                                                  |
+|  INSTRUMENT CODES                                                |
+|  -------------------------------------------------------         |
+|  AIC     Analytical Indicator Controller (pH, DO, UV, Cond)      |
+|  TIC     Temperature Indicator Controller                        |
+|  FIC     Flow Indicator Controller                               |
+|  PIC     Pressure Indicator Controller                           |
+|  WI      Weight Indicator                                        |
+|  SIC     Speed Indicator Controller                              |
+|  HV      Hand Valve (On/Off)                                     |
+|  XV      On/Off Valve                                            |
+|  FCV     Flow Control Valve                                      |
+|                                                                  |
+|  UNIT SUFFIXES                                                   |
+|  -------------------------------------------------------         |
+|  _PV             Process Variable (measured value)               |
+|  _SP             Setpoint (target value)                         |
+|  _percent        Value in percentage                             |
+|  _Celsius        Temperature in degrees C                        |
+|  _RPM            Speed in rotations per minute                   |
+|  _SLPM           Gas flow in standard liters per minute          |
+|  _kg             Weight in kilograms                             |
+|  _pH             pH units                                        |
+|  _psig           Pressure in psi gauge                           |
+|  _LPM            Liquid flow in liters per minute                |
+|  _LMH            Flux in liters per square meter per hour        |
+|  _AU             UV absorbance units                             |
+|  _mS/cm          Conductivity in millisiemens per cm             |
+|                                                                  |
+|  EXAMPLES                                                        |
+|  -------------------------------------------------------         |
+|  AIC-250-001_PV_percent   Dissolved Oxygen measurement           |
+|  TIC-250-001_SP_Celsius   Temperature setpoint                   |
+|  SIC-250-008_PV_RPM       Agitator speed                         |
+|  CHR01_AT003_PV           UV detector reading                    |
+|  TMP7M_psig               TFF transmembrane pressure             |
+|                                                                  |
++------------------------------------------------------------------+
+```
+
+---
+
+## Complete Asset Registry
+
+### All Device Paths
+
+| Device | Short Name | Full Path Prefix | Tag Count |
+|--------|------------|------------------|-----------|
+| SUM500 | sum | `Enterprise C/sum/` | 27 |
+| UNIT-250 | sub | `Enterprise C/sub/` | 84 |
+| CHR01 | chrom | `Enterprise C/chrom/` | 51 |
+| TFF300 | tff | `Enterprise C/tff/` | 26 |
+
+### SUM500 Complete Tag List
+
+```
+Enterprise C/sum/AI501-PV_pH
+Enterprise C/sum/BATCH_ID
+Enterprise C/sum/OPR_ID
+Enterprise C/sum/OPR_VRF
+Enterprise C/sum/PHASE_ID
+Enterprise C/sum/PRMP_MSG1
+Enterprise C/sum/RECIPE_ID
+Enterprise C/sum/SIC501-PV_RPM
+Enterprise C/sum/SIC501-SP_RPM
+Enterprise C/sum/SIC501A-PV_LPM
+Enterprise C/sum/SIC501A-SP_LPM
+Enterprise C/sum/SIC502-PV_LPM
+Enterprise C/sum/SIC502-SP_LPM
+Enterprise C/sum/SIC503-PV_LPM
+Enterprise C/sum/SIC503-SP_LPM
+Enterprise C/sum/SIC504-PV_LPM
+Enterprise C/sum/SIC504-SP_LPM
+Enterprise C/sum/SUM500-FORMULA-NAME
+Enterprise C/sum/SUM500-STATUS
+Enterprise C/sum/TIC501-PV_Celsius
+Enterprise C/sum/TIC501-SP_Celsius
+Enterprise C/sum/UNIT_ID
+Enterprise C/sum/WI501-PV_kg
+Enterprise C/sum/XV501-PV
+Enterprise C/sum/XV502-PV
+Enterprise C/sum/XV503-PV
+Enterprise C/sum/XV504-PV
+```
+
+### UNIT-250 Complete Tag List
+
+```
+Enterprise C/sub/AIC-250-001_ACTIVE
+Enterprise C/sub/AIC-250-001_PV_percent
+Enterprise C/sub/AIC-250-001_SP_percent
+Enterprise C/sub/AIC-250-002_ACTIVE
+Enterprise C/sub/AIC-250-003_ACTIVE
+Enterprise C/sub/AIC-250-003_PV_pH
+Enterprise C/sub/AIC-250-003_SP_pH
+Enterprise C/sub/DI-250-010
+Enterprise C/sub/FCV-250-001_PV_percent
+Enterprise C/sub/FCV-250-001_SP_percent
+Enterprise C/sub/FCV-250-002_PV_percent
+Enterprise C/sub/FCV-250-002_SP_percent
+Enterprise C/sub/FCV-250-003_PV_percent
+Enterprise C/sub/FCV-250-003_SP_percent
+Enterprise C/sub/FIC-250-001_ACTIVE
+Enterprise C/sub/FIC-250-001_PV_SLPM
+Enterprise C/sub/FIC-250-001_SP_SLPM
+Enterprise C/sub/FIC-250-002_PV_SLPM
+Enterprise C/sub/FIC-250-002_SP_SLPM
+Enterprise C/sub/FIC-250-003_ACTIVE
+Enterprise C/sub/FIC-250-003_PV_SLPM
+Enterprise C/sub/FIC-250-003_SP_SLPM
+Enterprise C/sub/HV-250-001_PV
+Enterprise C/sub/HV-250-002_PV
+Enterprise C/sub/HV-250-003_CMD
+Enterprise C/sub/HV-250-003_PV
+Enterprise C/sub/HV-250-004_MODE
+Enterprise C/sub/HV-250-004_PV
+Enterprise C/sub/HV-250-005_PV
+Enterprise C/sub/PIC-250-001_PV_psi
+Enterprise C/sub/PIC-250-001_SP_psi
+Enterprise C/sub/SIC-250-002_PV_1
+Enterprise C/sub/SIC-250-002_PV_EU_1
+Enterprise C/sub/SIC-250-002_SP_1
+Enterprise C/sub/SIC-250-002_SP_EU_1
+Enterprise C/sub/SIC-250-002_START_1
+Enterprise C/sub/SIC-250-002_STATUS
+Enterprise C/sub/SIC-250-003_PV_L_per_min
+Enterprise C/sub/SIC-250-003_SP_L_per_min
+Enterprise C/sub/SIC-250-003_START
+Enterprise C/sub/SIC-250-003_STATUS
+Enterprise C/sub/SIC-250-004_PV_L_per_min
+Enterprise C/sub/SIC-250-004_SP_L_per_min
+Enterprise C/sub/SIC-250-004_START
+Enterprise C/sub/SIC-250-004_STATUS
+Enterprise C/sub/SIC-250-005_MODE
+Enterprise C/sub/SIC-250-005_PV_mL_per_min
+Enterprise C/sub/SIC-250-005_SP_mL_per_min
+Enterprise C/sub/SIC-250-005_START
+Enterprise C/sub/SIC-250-005_STATUS
+Enterprise C/sub/SIC-250-006_PV_mL_per_min
+Enterprise C/sub/SIC-250-006_SP_mL_per_min
+Enterprise C/sub/SIC-250-006_START
+Enterprise C/sub/SIC-250-006_STATUS
+Enterprise C/sub/SIC-250-008_MODE
+Enterprise C/sub/SIC-250-008_PV_RPM
+Enterprise C/sub/SIC-250-008_SP_RPM
+Enterprise C/sub/SIC-250-008_START
+Enterprise C/sub/SIC-250-MEDIA_MODE
+Enterprise C/sub/SIC-250-MEDIA_PV_L_per_min
+Enterprise C/sub/SIC-250-MEDIA_SP_L_per_min
+Enterprise C/sub/SIC-250-MEDIA_START
+Enterprise C/sub/SIC-250-MEDIA_STATUS
+Enterprise C/sub/TI-250-001_PV_Celsius
+Enterprise C/sub/TI-250-002_PV_Celsius
+Enterprise C/sub/TIC-250-001_ACTIVE
+Enterprise C/sub/TIC-250-001_MODE
+Enterprise C/sub/TIC-250-001_PV_Celsius
+Enterprise C/sub/TIC-250-001_SP_Celsius
+Enterprise C/sub/TIC-250-002_ACTIVE
+Enterprise C/sub/TIC-250-002_MODE
+Enterprise C/sub/TIC-250-002_PV_Celsius
+Enterprise C/sub/TIC-250-002_SP_Celsius
+Enterprise C/sub/UNIT-250_BATCH_ID
+Enterprise C/sub/UNIT-250_FORMULA
+Enterprise C/sub/UNIT-250_MSG1
+Enterprise C/sub/UNIT-250_MSG1_ACK
+Enterprise C/sub/UNIT-250_MSG1_USER
+Enterprise C/sub/UNIT-250_MSG1_VERIFY
+Enterprise C/sub/UNIT-250_MSG2
+Enterprise C/sub/UNIT-250_PHASE
+Enterprise C/sub/UNIT-250_RECIPE
+Enterprise C/sub/UNIT-250_STATE
+Enterprise C/sub/WI-250-001_PV_kg
+```
+
+### CHR01 Complete Tag List
+
+```
+Enterprise C/chrom/CHR01-BATCH-ID
+Enterprise C/chrom/CHR01-FORMULA-NAME
+Enterprise C/chrom/CHR01-RECIPE-NAME
+Enterprise C/chrom/CHR01_AT001_DESC
+Enterprise C/chrom/CHR01_AT001_EU
+Enterprise C/chrom/CHR01_AT001_PV
+Enterprise C/chrom/CHR01_AT002_DESC
+Enterprise C/chrom/CHR01_AT002_EU
+Enterprise C/chrom/CHR01_AT002_PV
+Enterprise C/chrom/CHR01_AT003_DESC
+Enterprise C/chrom/CHR01_AT003_EU
+Enterprise C/chrom/CHR01_AT003_PV
+Enterprise C/chrom/CHR01_FT001_DESC
+Enterprise C/chrom/CHR01_FT001_EU
+Enterprise C/chrom/CHR01_FT001_PV
+Enterprise C/chrom/CHR01_P001A_DESC
+Enterprise C/chrom/CHR01_P001A_EU
+Enterprise C/chrom/CHR01_P001A_PV
+Enterprise C/chrom/CHR01_P001B_DESC
+Enterprise C/chrom/CHR01_P001B_EU
+Enterprise C/chrom/CHR01_P001B_PV
+Enterprise C/chrom/CHR01_PHASE_PV
+Enterprise C/chrom/CHR01_PROD_DESC
+Enterprise C/chrom/CHR01_PROD_PV
+Enterprise C/chrom/CHR01_PROMPT_ACK_PV
+Enterprise C/chrom/CHR01_PROMPT_MSG_PV
+Enterprise C/chrom/CHR01_PROMPT_OPERATOR_PV
+Enterprise C/chrom/CHR01_PT002_DESC
+Enterprise C/chrom/CHR01_PT002_EU
+Enterprise C/chrom/CHR01_PT002_PV
+Enterprise C/chrom/CHR01_PT003_DESC
+Enterprise C/chrom/CHR01_PT003_EU
+Enterprise C/chrom/CHR01_PT003_PV
+Enterprise C/chrom/CHR01_STATE_PV
+Enterprise C/chrom/CHR01_TT001_DESC
+Enterprise C/chrom/CHR01_TT001_EU
+Enterprise C/chrom/CHR01_TT001_PV
+Enterprise C/chrom/CHR01_V001_DESC
+Enterprise C/chrom/CHR01_V001_PV
+Enterprise C/chrom/CHR01_V002_DESC
+Enterprise C/chrom/CHR01_V002_PV
+Enterprise C/chrom/CHR01_V003_DESC
+Enterprise C/chrom/CHR01_V003_PV
+Enterprise C/chrom/CHR01_V004_DESC
+Enterprise C/chrom/CHR01_V004_PV
+Enterprise C/chrom/CHR01_V005_DESC
+Enterprise C/chrom/CHR01_V005_PV
+Enterprise C/chrom/CHR01_V006_DESC
+Enterprise C/chrom/CHR01_V006_PV
+Enterprise C/chrom/CHR01_WASTE_DESC
+Enterprise C/chrom/CHR01_WASTE_PV
+```
+
+### TFF300 Complete Tag List
+
+```
+Enterprise C/tff/CI8R_mS/cm
+Enterprise C/tff/DPI7M_psig
+Enterprise C/tff/FI7F_LPM
+Enterprise C/tff/FI8P_LPM
+Enterprise C/tff/FX7F_LMH
+Enterprise C/tff/FX8P_LMH
+Enterprise C/tff/OPR_ID
+Enterprise C/tff/P5R5_percent
+Enterprise C/tff/P8P7_percent
+Enterprise C/tff/P9A1_percent
+Enterprise C/tff/P9A2_percent
+Enterprise C/tff/PCV7X_percent
+Enterprise C/tff/PI5R8_psig
+Enterprise C/tff/PI7F_psig
+Enterprise C/tff/PI8R_psig
+Enterprise C/tff/PRMP_MSG
+Enterprise C/tff/PRMP_TMR_SEC
+Enterprise C/tff/SR8R_sec_-1
+Enterprise C/tff/TFF300-BATCH-ID
+Enterprise C/tff/TFF300-FORMULA-NAME
+Enterprise C/tff/TFF300-RECIPE-NAME
+Enterprise C/tff/TI8R_Celsius
+Enterprise C/tff/TMP7M_psig
+Enterprise C/tff/UV8R_AU
+Enterprise C/tff/WI17K_kg
+Enterprise C/tff/phase
+```
+
+---
+
+## Glossary
+
+| Term | Definition |
+|------|------------|
+| **AU** | Absorbance Units - Measure of light absorption by proteins at 280nm |
+| **Batch** | A specific quantity of product manufactured in a single production cycle |
+| **Bioreactor** | Vessel for cell culture containing controlled environment for cell growth |
+| **Buffer** | Solution maintaining pH stability during chromatography or filtration |
+| **Cascade Control** | Control strategy where one controller's output is another's setpoint |
+| **CHR** | Chromatography - Separation technique based on differential affinity |
+| **CIP** | Clean-In-Place - Automated cleaning without equipment disassembly |
+| **Conductivity** | Measure of ionic strength in solution (mS/cm) |
+| **Diafiltration** | Buffer exchange using TFF while maintaining constant volume |
+| **DO** | Dissolved Oxygen - Oxygen concentration in liquid (% saturation) |
+| **Downstream** | Purification steps after cell culture (chromatography, filtration) |
+| **Feed Phase** | Bioreactor phase where nutrients are continuously added |
+| **Flux** | Rate of liquid passage through membrane (L/m2/hr or LMH) |
+| **Formula** | Product specification defining the exact product variant |
+| **GMP** | Good Manufacturing Practice - Regulatory quality standards |
+| **Gradient** | Progressive change in buffer composition during chromatography |
+| **Harvest** | Collection of cell culture product from bioreactor |
+| **ISA-5.1** | Standard for instrumentation symbols and identification |
+| **ISA-88** | Standard for batch control systems (S88) |
+| **LMH** | Liters per square Meter per Hour - Flux measurement |
+| **mS/cm** | Millisiemens per centimeter - Conductivity unit |
+| **Operator Prompt** | Human verification step required by GMP |
+| **P&ID** | Piping and Instrumentation Diagram |
+| **Phase** | Discrete step within a batch recipe procedure |
+| **PV** | Process Variable - Actual measured value |
+| **Recipe** | Defined sequence of phases and parameters for production |
+| **Retentate** | Material retained by the membrane during filtration |
+| **SLPM** | Standard Liters Per Minute - Gas flow unit |
+| **SP** | Setpoint - Target value for a control loop |
+| **State** | Current operating condition (Running, Idle, Complete, Holding) |
+| **TFF** | Tangential Flow Filtration - Cross-flow membrane filtration |
+| **TMP** | Transmembrane Pressure - Pressure across filter membrane |
+| **Upstream** | Cell culture steps before purification |
+| **UV** | Ultraviolet - Light absorption for protein detection at 280nm |
+
+---
+
+## Troubleshooting Common Issues
+
+### "I can't find data for my equipment"
+
+1. **Check the device code:** Use short names
+   - Wrong: `Enterprise C/UNIT-250/...`
+   - Correct: `Enterprise C/sub/...`
+
+2. **Verify the path structure:**
+   - Wrong: `EnterpriseC/sub/AIC101_DO_PV`
+   - Correct: `Enterprise C/sub/AIC-250-001_PV_percent`
+
+3. **Check tag naming with units:**
+   - Tags include engineering units: `_PV_percent`, `_Celsius`, `_RPM`
+
+### "The DO value seems wrong"
+
+- DO is expressed as % saturation (0-100%), not mg/L
+- Typical operating range during fed-batch: 25-40%
+- Check AIC-250-001_SP_percent to confirm setpoint
+
+### "Where do I find batch context?"
+
+Batch context tag names vary by device:
+```
+Enterprise C/sub/UNIT-250_BATCH_ID
+Enterprise C/sub/UNIT-250_PHASE
+Enterprise C/sub/UNIT-250_STATE
+
+Enterprise C/sum/BATCH_ID
+Enterprise C/sum/PHASE_ID
+Enterprise C/sum/SUM500-STATUS
+
+Enterprise C/chrom/CHR01-BATCH-ID
+Enterprise C/chrom/CHR01_PHASE_PV
+Enterprise C/chrom/CHR01_STATE_PV
+
+Enterprise C/tff/TFF300-BATCH-ID
+Enterprise C/tff/phase
+```
+
+### "What do the phase codes mean?"
+
+| Device | Phase Pattern | Example |
+|--------|--------------|---------|
+| sub | PH_SUB_* | PH_SUB_FEED2 = Feed phase 2 |
+| sum | PH_SUM_* | PH_SUM_XFR = Transfer phase |
+| chrom | Step names | LOAD, WASH, ELUTE, FLUSH |
+| tff | Step names | CONCENTRATE, DIAFILTRATION, IDLE |
+
+### "How do I know if a valve is open?"
+
+Query the valve tag directly:
+```
+Enterprise C/sub/HV-250-001_PV
+```
+Returns: `OPEN` or `CLOSED`
+
+### "Why is there no OEE data?"
+
+Enterprise C is batch-centric, not OEE-focused. Performance is measured by:
+- Batch cycle time vs. standard
+- Product yield (measured offline)
+- Phase duration against recipe targets
+- Right-first-time metrics
+
+---
+
+## Key Differences from Enterprise A and Enterprise B
+
+| Aspect | Enterprise A (Glass) | Enterprise B (Beverage) | Enterprise C (Biopharma) |
+|--------|---------------------|------------------------|-------------------------|
+| **Hierarchy** | Enterprise/Site/Line/Area/Equipment | Enterprise/Site/Area/Line/WorkCenter | Enterprise/Device/Tags (Flat) |
+| **Topic Format** | Custom UNS | Custom UNS | Enterprise C/{device}/{tag} |
+| **Focus** | OEE and continuous production | OEE and discrete production | Batch control and GMP |
+| **Standards** | ISA-95 (functional hierarchy) | ISA-95 (role-based) | ISA-88 (batch control) |
+| **Tag Naming** | Descriptive (Temperature, Level) | Descriptive (flowrate, temperature) | Equipment codes (AIC-250-001_PV_percent) |
+| **Key Metrics** | OEE, temperatures, counts | OEE, counts, rates | DO, pH, Temp, Pressure, Phase |
+| **Work Orders** | At Line/Equipment level | At Line/WorkCenter level | At Device level (BATCH_ID) |
+| **Operator Role** | Monitoring | Monitoring | Active prompts/acknowledgments |
+
+---
+
+*Document generated for Enterprise C Unified Namespace configuration.*
+
+*For questions or updates, contact your UNS administrator.*
