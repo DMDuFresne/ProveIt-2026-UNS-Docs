@@ -134,36 +134,42 @@ Per ISA-5.1, instrument tags follow this format:
 | FT-LP-TK01-001 | Tank 01 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK01-001 | Tank 01 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK01-001 | Tank 01 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK01-001 | Tank 01 Hydrostatic Pressure | Pressure Transmitter | 0-15 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK01-001 | Tank 01 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK01-001 | Tank 01 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 | **TK-02** |
 | FT-LP-TK02-001 | Tank 02 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK02-001 | Tank 02 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK02-001 | Tank 02 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK02-001 | Tank 02 Hydrostatic Pressure | Pressure Transmitter | 0-15 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK02-001 | Tank 02 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK02-001 | Tank 02 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 | **TK-03** |
 | FT-LP-TK03-001 | Tank 03 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK03-001 | Tank 03 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK03-001 | Tank 03 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK03-001 | Tank 03 Hydrostatic Pressure | Pressure Transmitter | 0-10 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK03-001 | Tank 03 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK03-001 | Tank 03 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 | **TK-04** |
 | FT-LP-TK04-001 | Tank 04 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK04-001 | Tank 04 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK04-001 | Tank 04 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK04-001 | Tank 04 Hydrostatic Pressure | Pressure Transmitter | 0-15 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK04-001 | Tank 04 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK04-001 | Tank 04 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 | **TK-05** |
 | FT-LP-TK05-001 | Tank 05 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK05-001 | Tank 05 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK05-001 | Tank 05 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK05-001 | Tank 05 Hydrostatic Pressure | Pressure Transmitter | 0-20 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK05-001 | Tank 05 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK05-001 | Tank 05 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 | **TK-06** |
 | FT-LP-TK06-001 | Tank 06 Discharge Flow | Magnetic Flowmeter | 0-300 GPM | 4-20mA HART | Discharge |
 | TT-LP-TK06-001 | Tank 06 Product Temperature | RTD (Pt100) | 32-150 degF | 4-20mA HART | Thermowell |
 | LT-LP-TK06-001 | Tank 06 Level | Guided Wave Radar | 0-100% | 4-20mA HART | Top Mount |
+| PT-LP-TK06-001 | Tank 06 Hydrostatic Pressure | Pressure Transmitter | 0-10 PSIG | 4-20mA HART | Bottom Mount |
 | LSH-LP-TK06-001 | Tank 06 High Level Switch | Float Switch | Hi Alarm | 24VDC | Side Mount |
 | LSL-LP-TK06-001 | Tank 06 Low Level Switch | Float Switch | Lo Alarm | 24VDC | Side Mount |
 
